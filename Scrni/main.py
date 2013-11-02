@@ -1,17 +1,28 @@
 import win32api
 import win32con
 import win32ui
+from datetime import datetime
 from SysTray import SysTrayIcon
+from poster.encode import multipart_encode
+from poster.streaminghttp import register_openers
+import urllib2
 try:
     import winxpgui as win32gui
 except ImportError:
     import win32gui
+
+lastUnqiueWindow = None;
 
 if __name__ == '__main__':
     import itertools, glob
     
     icons = itertools.cycle(glob.glob('*.ico'))
     hover_text = "Scrni - a0.1"
+
+    currWindow = win32gui.GetForegroundWindow()
+
+    if currWindow != lastUnqiueWindow:
+        lastUnqiueWindow = currWindow
 
     def switch_icon(sysTrayIcon, index=None):
 
@@ -23,18 +34,24 @@ if __name__ == '__main__':
         sysTrayIcon.refresh_icon()
 
     def caputre_window(sysTrayIcon):
-        wDC = win32gui.GetWindowDC(win32gui.GetForegroundWindow())
-        w = win32api.GetSystemMetrics(win32con.SM_CXVIRTUALSCREEN)
-        h = win32api.GetSystemMetrics(win32con.SM_CYVIRTUALSCREEN)
-        l = win32api.GetSystemMetrics(win32con.SM_XVIRTUALSCREEN)
-        t = win32api.GetSystemMetrics(win32con.SM_YVIRTUALSCREEN)
+        wDC = win32gui.GetWindowDC(lastUnqiueWindow)
+        rect = win32gui.GetWindowRect(lastUnqiueWindow)
+        l = rect[0]
+        t = rect[1]
+        w = rect[2] - l
+        h = rect[3] - t
         dcObj=win32ui.CreateDCFromHandle(wDC)
         cDC=dcObj.CreateCompatibleDC()
         dataBitMap = win32ui.CreateBitmap()
         dataBitMap.CreateCompatibleBitmap(dcObj, w, h)
         cDC.SelectObject(dataBitMap)
-        cDC.BitBlt((0,0),(w, h) , dcObj, (l,t), win32con.SRCCOPY)
-        dataBitMap.SaveBitmapFile(cDC, "img.bmp")
+        cDC.BitBlt((0,0),(w, h) , dcObj, (0,0), win32con.SRCCOPY)
+        dataBitMap.SaveBitmapFile(cDC, "temp.png")
+
+        register_openers()
+        datagen, headers = multipart_encode({"img": open("temp.png", "rb")})
+        request = urllib2.Request("http://breakthemeta.net/upload_file.php", datagen, headers)
+        print urllib2.urlopen(request).read()
 
     def caputre_desktop(sysTrayIcon):
         wDC = win32gui.GetWindowDC(win32gui.GetDesktopWindow())
@@ -48,10 +65,11 @@ if __name__ == '__main__':
         dataBitMap.CreateCompatibleBitmap(dcObj, w, h)
         cDC.SelectObject(dataBitMap)
         cDC.BitBlt((0,0),(w, h) , dcObj, (l,t), win32con.SRCCOPY)
-        dataBitMap.SaveBitmapFile(cDC, "img.bmp")
+        i = datetime.now()
+        dataBitMap.SaveBitmapFile(cDC, i.strftime('%Y/%m/%dat%H:%M:%S.png'))
 
     def caputre_region(sysTrayIcon):
-        print ("wubba")
+        print (time.strftime("%x at %X.bmp"))
 
     menu_options = (('Capture Current Window', None, caputre_window),
                     ('Capture Current Desktop', None, caputre_desktop),
