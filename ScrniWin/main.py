@@ -1,8 +1,8 @@
 import win32api
 import win32con
 import win32ui
-from datetime import datetime
 from SysTray import SysTrayIcon
+import UploadProgress
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import urllib2
@@ -50,8 +50,14 @@ if __name__ == '__main__':
 
         register_openers()
         datagen, headers = multipart_encode({"img": open("temp.png", "rb")})
-        request = urllib2.Request("http://breakthemeta.net/upload_file.php", datagen, headers)
+        request = urllib2.Request("http://162.243.65.219/upload_image.php", datagen, headers)
         print urllib2.urlopen(request).read()
+
+        #prog = UploadProgress.Progress();
+        #stream = UploadProgress.file_with_callback("temp.png", 'rb', prog.update, "File")
+        #req = urllib2.Request("http://162.243.65.219/upload_image.php", stream)
+        #print urllib2.urlopen(req).read()
+
 
     def caputre_desktop(sysTrayIcon):
         wDC = win32gui.GetWindowDC(win32gui.GetDesktopWindow())
@@ -65,7 +71,7 @@ if __name__ == '__main__':
         dataBitMap.CreateCompatibleBitmap(dcObj, w, h)
         cDC.SelectObject(dataBitMap)
         cDC.BitBlt((0,0),(w, h) , dcObj, (l,t), win32con.SRCCOPY)
-        i = datetime.now()
+        
         dataBitMap.SaveBitmapFile(cDC, i.strftime('%Y/%m/%dat%H:%M:%S.png'))
 
     def caputre_region(sysTrayIcon):
