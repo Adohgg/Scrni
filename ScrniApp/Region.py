@@ -9,8 +9,10 @@ class Selection(wx.Frame):
     def __init__(self):
         super(Selection, self).__init__(None)
 
+        self.img = Scrni.ImageHandle();
+
         self.panel = wx.Panel(self, size=self.GetSize())
-        self.SetTransparent(50)
+        self.SetTransparent(10)
 
         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         self.panel.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
@@ -35,23 +37,15 @@ class Selection(wx.Frame):
         self.c1 = event.GetPosition()
 
     def OnMouseUp(self, event):
-        Scrni.ImageHandle.capture_selection(self.c1, self.c2)
+        self.Hide()
+        self.img.capture_region(self.c1, self.c2)
 
     def OnPaint(self, event):
         if self.c1 is None or self.c2 is None: return
 
         dc = wx.PaintDC(self.panel)
+        dc.CrossHair(self.c2.x, self.c2.y)
         dc.SetPen(wx.Pen('black', 2))
         dc.SetBrush(wx.Brush(wx.Color(0, 0, 0), wx.TRANSPARENT))
 
         dc.DrawRectangle(self.c1.x, self.c1.y, self.c2.x - self.c1.x, self.c2.y - self.c1.y)
-
-    def reset():
-        Selection.c1 = None
-        Selection.c2 = None
-
-    def show():
-        Selection.Show()
-
-    def hide():
-        Region.Hide()
