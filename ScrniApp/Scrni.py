@@ -8,18 +8,21 @@ from poster.streaminghttp import register_openers
 
 class ImageHandle():
 
+    def __init__(self):
+        self.taskicon = TrayIcon.TaskBarIcon(self)
+        self.selection = Region.Selection(self)
+
     def capture_desktop(self, event):
         im=ImageGrab.grab_to_file("temp.png")
         self.post_image()
 
     def select_region(self, event):
-        sel = Region.Selection()
-        sel.ShowFullScreen(True)
+        self.selection.ShowFullScreen(True)
 
     def capture_region(self, c1, c2):
         p1, p2 = self.fixCoords(c1, c2)
-        print "Point 1 (" + str(p1.x) + "," + str(p1.y) + ")"
-        print "Point 2 (" + str(p2.x) + "," + str(p2.y) + ")"
+        #print "Point 1 (" + str(p1.x) + "," + str(p1.y) + ")"
+        #print "Point 2 (" + str(p2.x) + "," + str(p2.y) + ")"
         im=ImageGrab.grab(bbox=(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)).save("temp.png")
         self.post_image()
 
@@ -27,7 +30,7 @@ class ImageHandle():
         register_openers()
         datagen, headers = multipart_encode({"img": open("temp.png", "rb")})
         request = urllib2.Request("http://162.243.65.219/upload_image.php", datagen, headers)
-        print urllib2.urlopen(request).read()
+        TrayIcon.copyResponse(self.taskicon, urllib2.urlopen(request).read())
 
     def fixCoords(self, c1, c2):
         p1 = wx.Point(0, 0)
@@ -46,7 +49,7 @@ class ImageHandle():
 
 def main():
     app = wx.PySimpleApp()
-    TrayIcon.TaskBarIcon()
+    imgh = ImageHandle()
     app.MainLoop()
 
 if __name__ == '__main__':

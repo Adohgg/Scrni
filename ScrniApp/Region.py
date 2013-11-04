@@ -6,10 +6,10 @@ class Selection(wx.Frame):
     c1 = None
     c2 = None
 
-    def __init__(self):
+    def __init__(self, scrni):
         super(Selection, self).__init__(None)
 
-        self.img = Scrni.ImageHandle();
+        self.scrni = scrni
 
         self.panel = wx.Panel(self, size=self.GetSize())
         self.SetTransparent(10)
@@ -38,7 +38,7 @@ class Selection(wx.Frame):
 
     def OnMouseUp(self, event):
         self.Hide()
-        self.img.capture_region(self.c1, self.c2)
+        self.scrni.capture_region(self.c1, self.c2)
 
     def OnPaint(self, event):
         if self.c1 is None or self.c2 is None: return

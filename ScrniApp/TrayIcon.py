@@ -10,20 +10,29 @@ def create_menu_item(menu, label, func):
     menu.AppendItem(item)
     return item
 
+def copyResponse(menu, res):
+    do = wx.TextDataObject()
+    do.SetText(res)
+    if wx.TheClipboard.Open():
+        wx.TheClipboard.SetData(do)
+        wx.TheClipboard.Close()
+    else:
+        wx.MessageBox("Unable to open the clipboard", "Error")
+
 class TaskBarIcon(wx.TaskBarIcon):
-    def __init__(self):
+    def __init__(self, scrni):
         super(TaskBarIcon, self).__init__()
 
-        self.img = Scrni.ImageHandle();
+        self.scrni = scrni;
 
         self.set_icon(TRAY_ICON)
-        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.img.select_region)
+        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.scrni.select_region)
 
     def CreatePopupMenu(self):
         menu = wx.Menu()
         #create_menu_item(menu, 'Capture Current Window', self.capture_window)
-        create_menu_item(menu, 'Capture Desktop', self.img.capture_desktop)
-        create_menu_item(menu, 'Capture Region', self.img.select_region)
+        create_menu_item(menu, 'Capture Desktop', self.scrni.capture_desktop)
+        create_menu_item(menu, 'Capture Region', self.scrni.select_region)
         menu.AppendSeparator()
         create_menu_item(menu, 'Exit', self.on_exit)
         return menu

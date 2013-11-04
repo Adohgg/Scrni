@@ -1,10 +1,17 @@
 Scrni
 =====
 
-Instant screen shot sharing with cropping capability.
+Instant screenshot sharing.
+
+Currently:
+* Full desktop screenshot
+* Region selection screenshot
+* Return URL and automaically copys it to your clipboard
 
 Dependancies
 -----
-* python
+* python 2.7.5
 * py2exe
 * wxPython
+* poster
+* pyscreenshot
