@@ -1,5 +1,6 @@
 import wx
 import Scrni
+from sys import exit
 
 TRAY_TOOLTIP = 'Scrni'
 TRAY_ICON = 'icon.ico'
@@ -42,4 +43,4 @@ class TaskBarIcon(wx.TaskBarIcon):
         self.SetIcon(icon, TRAY_TOOLTIP)
 
     def on_exit(self, event):
-        wx.CallAfter(self.Destroy)
+        exit(0)

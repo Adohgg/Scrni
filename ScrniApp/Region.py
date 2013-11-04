@@ -45,7 +45,7 @@ class Selection(wx.Frame):
 
         dc = wx.PaintDC(self.panel)
         dc.CrossHair(self.c2.x, self.c2.y)
-        dc.SetPen(wx.Pen('black', 2))
-        dc.SetBrush(wx.Brush(wx.Color(0, 0, 0), wx.TRANSPARENT))
+        #dc.SetPen(wx.Pen('black', 2))
+        dc.SetBrush(wx.Brush(wx.Color(10, 10, 10)))
 
         dc.DrawRectangle(self.c1.x, self.c1.y, self.c2.x - self.c1.x, self.c2.y - self.c1.y)
